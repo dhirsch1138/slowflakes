@@ -1,5 +1,7 @@
 # Slowflakes
 
+**10/24/2026** This is vibe slop I am playing with to implement a self directed version of determinatesystem's 'nixpkgs-weekly' channel that covers ALL inputs instead of just nixpkgs. I am adding this to github to dogfood it. I make no promises or guarantees. Read it yourself if you are feeling brave and want to try it. 
+
 **Slowflakes** is a NixOS module that creates an isolated, time-delayed update buffer for your `flake.lock`. By maintaining a rolling background history in `/var/lib/slowflakes-state/`, it allows you to promote tested, multi-day-old lockfiles into your main NixOS configuration (`/etc/nixos`), shielding your system from sudden upstream regressions.
 
 ---
