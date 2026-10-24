@@ -107,4 +107,6 @@ As all state data is confined to /var/lib/***`services.slowflakes.stateFolderNam
 ## Safety Mechanisms
 
 * **Uncommitted Changes Guard**: `slowflakes-update` detects uncommitted local edits to `flake.lock` and aborts to prevent overwriting local emergency hotfixes.
-* **Hybrid mtime Check**: Evaluates both filesystem modification times and Git commit history.
+* **State data confined to /var/lib/.../ path**
+  * The historical flake.lock files are stored in a isolated folder
+  * Interaction with the rest of the system is limited to promotion of flake.lock files from the historical store into the production path, and is managed by  **`slowflakes-update`** 
