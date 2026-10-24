@@ -30,6 +30,7 @@ This project includes tools to allow the user to utilize the historical flakes m
 * **`slowflakes-cleanup`**: Wipes all data from the service's state folder, allowing it to be reset by the service or just removing state.
   
 Manual pages are available via `man slowflakes-status`, `man slowflakes-update`, and `man slowflakes-cleanup`.
+
 ---
 
 ## Quickstart
