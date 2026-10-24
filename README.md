@@ -192,7 +192,7 @@ Latest Snapshot Date:   2026-10-24 11:35:24 -0400 (a1b2c3d)
 
 ### 2. Promote the Lockfile
 
-Run `slowflakes-update` with `sudo` (required to modify `/etc/nixos/flake.lock`). By default, it retrieves the newest snapshot that is **at least 7 days old**:
+Run `slowflakes-update` with `sudo` (required to modify `/etc/nixos/flake.lock`). By default, it retrieves the newest snapshot that is **at least `services.slowflakes.delayDays` days old**:
 
 ```bash
 cd /etc/nixos
