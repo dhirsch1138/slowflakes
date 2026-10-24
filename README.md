@@ -94,6 +94,66 @@ Rebuild your system:
 ```bash
 sudo nixos-rebuild switch
 ```
+---
+
+## Configuration Options
+
+Configure `slowflakes` in your NixOS configuration under the `services.slowflakes` namespace.
+
+### Summary Table
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `services.slowflakes.enable` | `boolean` | `false` | Enables the `slowflakes` module and installs CLI scripts. |
+| `services.slowflakes.delayDays` | `integer` | `7` | Mandatory quarantine buffer age (in days) required before promoting lockfiles. |
+| `services.slowflakes.repoPath` | `string` | `"/etc/nixos"` | Target directory where the production `flake.lock` file resides. |
+| `services.slowflakes.stateFolderName` | `string` | `"slowflakes-state"` | Directory name created inside `/var/lib/` to house the isolated state repository. |
+| `services.slowflakes.enableLocalAutomation` | `boolean` | `true` | Enables the background `systemd` timer for daily automated state updates. |
+| `services.slowflakes.networkCheckEnabled` | `boolean` | `true` | Enables pre-flight network reachability checks before running background updates. |
+| `services.slowflakes.gitUserName` | `string` | `"Slowflakes Bot"` | Git author name recorded for automated state commits. |
+| `services.slowflakes.gitUserEmail` | `string` | `"slowflakes-bot@localhost"` | Git author email recorded for automated state commits. |
+
+### Detailed Technical Definitions
+
+#### `services.slowflakes.enable`
+* **Type**: `boolean`
+* **Default**: `false`
+* **Description**: Controls whether the `slowflakes` module is enabled. When set to `true`, it registers the `slowflakes-bot` system user/group, installs the `slowflakes-update`, `slowflakes-status`, and `slowflakes-cleanup` CLI utilities, and generates the accompanying `scdoc` man pages into the system profile.
+
+#### `services.slowflakes.delayDays`
+* **Type**: `integer`
+* **Default**: `7`
+* **Description**: Defines the quarantine threshold in days. When running `slowflakes-update`, the script queries the isolated state repository and retrieves the newest snapshot that is **at least `delayDays` old**, shielding your system from zero-day upstream package regressions. This value is also used to calculate the rolling historical git log retention policy (`delayDays * 3`).
+
+#### `services.slowflakes.repoPath`
+* **Type**: `string (absolute path)`
+* **Default**: `"/etc/nixos"`
+* **Description**: Specifies the root path of your primary NixOS Git repository containing `flake.nix` and `flake.lock`. `slowflakes-update` will modify `flake.lock` in this directory, and `slowflakes-status` will check this directory for uncommitted local edits or hotfixes before applying promotions.
+
+#### `services.slowflakes.stateFolderName`
+* **Type**: `string`
+* **Default**: `"slowflakes-state"`
+* **Description**: Sets the directory name for the isolated Git repository stored under `/var/lib/` (e.g., `/var/lib/slowflakes-state`). This repository runs in isolation under the unprivileged `slowflakes-bot` system user, preventing permission conflicts with your root-owned `/etc/nixos` repo.
+
+#### `services.slowflakes.enableLocalAutomation`
+* **Type**: `boolean`
+* **Default**: `true`
+* **Description**: Enables a daily background `systemd` timer (`slowflakes-localrepo-update.timer`) and oneshot service (`slowflakes-localrepo-update.service`). Every 24 hours, the service executes `nix flake update` inside `/var/lib/slowflakes-state` and commits a daily snapshot if changes are detected.
+
+#### `services.slowflakes.networkCheckEnabled`
+* **Type**: `boolean`
+* **Default**: `true`
+* **Description**: Performs an ICMP ping check (`8.8.8.8` / `1.1.1.1`) prior to running the background `nix flake update` routine. If the machine is offline or behind a captive portal, the service exits gracefully with status `0` without marking the `systemd` unit as failed.
+
+#### `services.slowflakes.gitUserName`
+* **Type**: `string`
+* **Default**: `"Slowflakes Bot"`
+* **Description**: Configures the Git author name assigned to automated daily commits created inside `/var/lib/slowflakes-state`.
+
+#### `services.slowflakes.gitUserEmail`
+* **Type**: `string`
+* **Default**: `"slowflakes-bot@localhost"`
+* **Description**: Configures the Git email address assigned to automated daily commits created inside `/var/lib/slowflakes-state`.
 
 ---
 
