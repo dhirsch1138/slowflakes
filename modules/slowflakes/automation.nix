@@ -89,6 +89,14 @@ in {
         StateDirectory = cfg.stateFolderName;
         StateDirectoryMode = "0755";
         PrivateDevices = true;
+
+        # Hardening directives
+        ProtectSystem = "strict";
+        ReadOnlyPaths = [ cfg.repoPath ];
+        ReadWritePaths = [ stateDir ];
+        ProtectHome = true;
+        ProtectKernelTunables = true;
+        ProtectControlGroups = true;
       };
     };
 
