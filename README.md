@@ -104,6 +104,8 @@ The services and tools are implemented by nix, and will be removed when the modu
 ### Optional - clean up state data
 As all state data is confined to /var/lib/***`services.slowflakes.stateFolderName`*** (default: /var/lib/slowflakes-state), and can be cleaned up with **`slowflakes-cleanup`**. Note: that tool is part of the module, so it should be ran *before* the module is disabled.
 
+---
+
 ## Safety Mechanisms
 
 * **Uncommitted Changes Guard**: `slowflakes-update` detects uncommitted local edits to `flake.lock` and aborts to prevent overwriting local emergency hotfixes.
