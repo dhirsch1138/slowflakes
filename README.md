@@ -1,12 +1,38 @@
 # Slowflakes
 
-**10/24/2026** This is vibe slop I am playing with to implement a self directed version of determinatesystem's 'nixpkgs-weekly' channel that covers ALL inputs instead of just nixpkgs. I am adding this to github to dogfood it. I make no promises or guarantees. Read it yourself if you are feeling brave and want to try it. 
+**Slowflakes** is a NixOS module that creates an isolated, time-delayed update buffer for your system's `flake.lock`. By maintaining a rolling background history in `/var/lib/slowflakes-state/`, it allows you to promote tested, multi-day-old lockfiles into your main NixOS configuration (`/etc/nixos`), shielding your system from sudden upstream regressions. 
 
-**Slowflakes** is a NixOS module that creates an isolated, time-delayed update buffer for your `flake.lock`. By maintaining a rolling background history in `/var/lib/slowflakes-state/`, it allows you to promote tested, multi-day-old lockfiles into your main NixOS configuration (`/etc/nixos`), shielding your system from sudden upstream regressions.
+This is vibe slop I am playing with to implement a self directed version of determinatesystem's 'nixpkgs-weekly' channel that covers ALL inputs instead of just nixpkgs. I am adding this to github to dogfood it. I make no promises or guarantees. Read it yourself if you are feeling brave and want to try it. 
 
 ---
 
-## 🚀 Quickstart
+## How it works
+
+Slowflakes has two pieces:
+
+### Systemd Service
+A service that generates and stores a history of "flake.lock" files for so that Slowflakes can promote 'aged' versions.
+* Runs daily
+* Runs under a local unprivileged service account "slowflakes-bot"
+* Stores state data in /var/lib/***services.slowflakes.stateFolderName*** (default: /var/lib/slowflakes-state)
+* Maintains a git repository in the state folder to provide a historical store of "flake.lock" files for the system.
+* Reads the system flake.nix in ***services.slowflakes.repoPath*** (default: /etc/nixos),
+* Copies the system flake.nix to the state folder.
+* Runs 'nix flake update' on the flake.nix in the state folder to create a current flake.lock
+* Commits the lock file the git repo.
+* Prunes the git repo to control space growth.
+
+### CLI Tools
+This project includes tools to allow the user to utilize the historical flakes maintained by the service.
+* **`slowflakes-status`**: View background timer health, active vs target lock comparison, disk usage, and state history.
+* **`slowflakes-update [optional - DAYS]`**: Safely promote a qualifying N-day-old lock snapshot into `/etc/nixos`. Pass `0` for immediate promotion testing.
+  * This is intended to be a replacement for "nix flake update". It promotes the 'aged' flake.lock that the service built X days ago. 
+* **`slowflakes-cleanup`**: Wipes all data from the service's state folder, allowing it to be reset by the service or just removing state.
+  
+Manual pages are available via `man slowflakes-status`, `man slowflakes-update`, and `man slowflakes-cleanup`.
+---
+
+## Quickstart
 
 ### 1. Add as a Flake Input
 
@@ -59,20 +85,15 @@ sudo nixos-rebuild switch
 
 ---
 
-## 🛠️ CLI Tooling
+## CLI Tooling
 
 Slowflakes provides three main command-line utilities:
 
-* **`slowflakes-status`**: View background timer health, active vs target lock comparison, disk usage, and state history.
-* **`slowflakes-update [DAYS]`**: Safely promote a qualifying N-day-old lock snapshot into `/etc/nixos`. Pass `0` for immediate promotion testing.
-* **`slowflakes-cleanup`**: View state repo size or prune historical commits older than your retention policy.
 
-Manual pages are available via `man slowflakes-status`, `man slowflakes-update`, and `man slowflakes-cleanup`.
 
 ---
 
-## 🛡️ Safety Mechanisms
+## Safety Mechanisms
 
 * **Uncommitted Changes Guard**: `slowflakes-update` detects uncommitted local edits to `flake.lock` and aborts to prevent overwriting local emergency hotfixes.
 * **Hybrid mtime Check**: Evaluates both filesystem modification times and Git commit history.
-* **Privilege Isolation**: The daily background service runs securely under the dedicated `slowflakes-bot` system user.
