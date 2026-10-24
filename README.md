@@ -157,6 +157,91 @@ Configure `slowflakes` in your NixOS configuration under the `services.slowflake
 
 ---
 
+## Usage Workflow
+
+The primary workflow involves inspecting your state buffer, promoting a quarantined `flake.lock`, testing, and committing the change.
+
+### 1. Check Buffer Status
+
+Before promoting, check the state repository history and verify that a qualifying lockfile snapshot is available:
+
+```bash
+slowflakes-status
+```
+
+**Example Output:**
+```text
+=== Slowflakes Diagnostic Status ===
+State Directory:  /var/lib/slowflakes-state (4.2M)
+Local Repository: /etc/nixos
+
+--- Systemd Automation Status ---
+Timer Status:      Active (running)
+Last Service Run:  Sat 2026-10-24 11:35:24 EDT (Result: success)
+
+--- Active vs Target Lock Comparison ---
+Local flake.lock:  Modified 2026-10-17 09:12:00 EDT [Committed]
+7-Day Target Lock: Available -> 2026-10-17 11:35:24 EDT (ce90123)
+Update Status:     Ready to promote (target is 12 hours newer than local)
+
+--- State Repository History ---
+Total Stored Snapshots: 14
+Oldest Snapshot Date:   2026-10-10 12:00:00 -0400
+Latest Snapshot Date:   2026-10-24 11:35:24 -0400 (a1b2c3d)
+```
+
+### 2. Promote the Lockfile
+
+Run `slowflakes-update` with `sudo` (required to modify `/etc/nixos/flake.lock`). By default, it retrieves the newest snapshot that is **at least 7 days old**:
+
+```bash
+cd /etc/nixos
+sudo slowflakes-update
+```
+
+**Example Output:**
+```text
+Fetching historical lock from isolated state repository...
+Found qualifying lock from state repo: 2026-10-17 11:35:24 -0400 (ce901236fcba2d53cf60cf6febe37a0e709c6a69)
+Success: Updated flake.lock in working directory from isolated history. Ready to review or rebuild!
+```
+
+> **Overriding the Delay Threshold:**
+> To test an immediate update or apply a specific quarantine delay, pass the desired number of days as an argument:
+> ```bash
+> # Apply 0-day delay (fetches the latest state snapshot immediately)
+> sudo slowflakes-update 0
+>
+> # Apply a custom 14-day delay
+> sudo slowflakes-update 14
+> ```
+
+### 3. Review and Rebuild
+
+Inspect the changes written to `flake.lock` and rebuild your system:
+
+```bash
+# Review the promoted diff
+git diff flake.lock
+
+# Test building the configuration
+sudo nixos-rebuild test
+
+# Apply and switch to the new generation
+sudo nixos-rebuild switch
+```
+
+### 4. Commit the Updated Lockfile
+
+Once system verification succeeds, commit the promoted `flake.lock` to your main Git repository:
+
+```bash
+git add flake.lock
+git commit -m "chore(flake): promote 7-day-old lockfile snapshot"
+```
+
+---
+
 ## Uninstall / cleanup instructions
 
 The services and tools are implemented by nix, and will be removed when the module is disabled
