@@ -14,9 +14,9 @@ Slowflakes has two pieces:
 A service that generates and stores a history of "flake.lock" files for so that Slowflakes can promote 'aged' versions.
 * Runs daily
 * Runs under a local unprivileged service account "slowflakes-bot"
-* Stores state data in /var/lib/***services.slowflakes.stateFolderName*** (default: /var/lib/slowflakes-state)
+* Stores state data in /var/lib/***`services.slowflakes.stateFolderName`*** (default: /var/lib/slowflakes-state)
 * Maintains a git repository in the state folder to provide a historical store of "flake.lock" files for the system.
-* Reads the system flake.nix in ***services.slowflakes.repoPath*** (default: /etc/nixos),
+* Reads the system flake.nix in ***`services.slowflakes.repoPath`*** (default: /etc/nixos),
 * Copies the system flake.nix to the state folder.
 * Runs 'nix flake update' on the flake.nix in the state folder to create a current flake.lock
 * Commits the lock file the git repo.
@@ -30,6 +30,17 @@ This project includes tools to allow the user to utilize the historical flakes m
 * **`slowflakes-cleanup`**: Wipes all data from the service's state folder, allowing it to be reset by the service or just removing state.
   
 Manual pages are available via `man slowflakes-status`, `man slowflakes-update`, and `man slowflakes-cleanup`.
+
+---
+
+## But what if an update can't wait X days?
+This is a useful framework, but inflexible. There are a myriad of reasons why a user would need to get the latest packages **now**, like critical security patches. No worries:
+
+`nix flake update` still works exactly as before.
+
+* As the service stores own state data, it is not impacted.
+* **`slowflakes-update`** will refuse to promote an older historical lock file over a new system flake.lock.
+* The operator may choose to not promote lock files from the historical store until sufficient time that the desired time buffer is re-established. 
 
 ---
 
@@ -83,14 +94,6 @@ Rebuild your system:
 ```bash
 sudo nixos-rebuild switch
 ```
-
----
-
-## CLI Tooling
-
-Slowflakes provides three main command-line utilities:
-
-
 
 ---
 
