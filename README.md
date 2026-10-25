@@ -56,7 +56,7 @@ In your NixOS system `flake.nix`:
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Or nixos-26.05, etc.
 
     slowflakes = {
-      url = "github:dhirsch1138/slowflakes";
+      url = "github:dhirsch1138/slowflakes/slowflakes0.1";
       inputs.nixpkgs.follows = "nixpkgs"; # Bind to host system nixpkgs
     };
   };
