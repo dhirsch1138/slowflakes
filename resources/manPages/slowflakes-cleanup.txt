@@ -1,0 +1,27 @@
+slowflakes-cleanup(1)
+
+# NAME
+slowflakes-cleanup - purge the isolated slowflakes rolling state repository
+
+# SYNOPSIS
+*slowflakes-cleanup*
+
+# DESCRIPTION
+An interactive operator-confirmed utility to wipe and completely destroy the isolated rolling state repository and its update history (*sudo rm -rf /var/lib/slowflakes-state*). The background systemd service will automatically re-initialize it fresh on its next scheduled run.
+
+# EXIT STATUS
+*0*
+	Success or user aborted.
+
+# AUTHORS
+Slowflakes Contributors.
+'';
+
+  slowflakesManPagesPackage = pkgs.runCommand "slowflakes-manpages" {
+    nativeBuildInputs = [ pkgs.scdoc ];
+  } ''
+    mkdir -p $out/share/man/man1
+    scdoc < ${updateDoc} > $out/share/man/man1/slowflakes-update.1
+    scdoc < ${statusDoc} > $out/share/man/man1/slowflakes-status.1
+    scdoc < ${cleanupDoc} > $out/share/man/man1/slowflakes-cleanup.1
+    gzip $out/share/man/man1/*.1
