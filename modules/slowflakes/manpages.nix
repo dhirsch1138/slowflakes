@@ -12,7 +12,21 @@ let
   cleanupDoc = pkgs.writeText "slowflakes-cleanup.1.scd" (
     builtins.readFile ./../resources/manPages/slowflakes-cleanup.txt
   );
-in {
+
+  slowflakesManPagesPackage =
+    pkgs.runCommand "slowflakes-manpages"
+      {
+        nativeBuildInputs = [ pkgs.scdoc ];
+      }
+      ''
+        mkdir -p $out/share/man/man1
+        scdoc < ${updateDoc} > $out/share/man/man1/slowflakes-update.1
+        scdoc < ${statusDoc} > $out/share/man/man1/slowflakes-status.1
+        scdoc < ${cleanupDoc} > $out/share/man/man1/slowflakes-cleanup.1
+        gzip $out/share/man/man1/*.1
+      '';
+in
+{
   slowflakesManPagesPackage = slowflakesManPagesPackage;
   package = slowflakesManPagesPackage; # Backward-compatibility alias
 }
