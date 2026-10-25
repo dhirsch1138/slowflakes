@@ -12,8 +12,7 @@ let
   cleanupDoc = pkgs.writeText "slowflakes-cleanup.1.scd" (
     builtins.readFile ./../resources/manPages/slowflakes-cleanup.txt
   );
-in
-{
+in {
   slowflakesManPagesPackage = slowflakesManPagesPackage;
   package = slowflakesManPagesPackage; # Backward-compatibility alias
 }
