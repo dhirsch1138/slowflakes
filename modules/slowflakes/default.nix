@@ -4,7 +4,7 @@ let
   cfg = config.services.slowflakes;
   stateDir = "/var/lib/${cfg.stateFolderName}";
 
-  scripts = import ./scripts.nix { inherit pkgs cfg stateDir; };
+  scripts = import ./scripts.nix { inherit pkgs config; };
   manPages = import ./manpages.nix { inherit pkgs; };
   automation = import ./automation.nix { inherit config lib pkgs; };
 in {

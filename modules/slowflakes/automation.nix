@@ -2,7 +2,7 @@
 
 let
   cfg = config.services.slowflakes;
-  stateDir = "/var/lib/${cfg.stateFolderName}";
+  stateDir = "/var/lib/${cfg.stateFolderName}";  
 in {
   config = lib.mkIf cfg.enable {
     nix.settings.allowed-users = [ "slowflakes-bot" ];
