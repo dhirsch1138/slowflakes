@@ -11,7 +11,7 @@ set -euo pipefail
 #      export DELAY_DAYS="${toString cfg.delayDays}"
 #    '' + builtins.readFile ./resources/scripts/${name}.sh;
 TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
-
+CONFIGURED_REPO_PATH="${REPO_PATH}"
 CURRENT_DIR=$(pwd -P)
 REAL_REPO_PATH=$(cd "$CONFIGURED_REPO_PATH" 2>/dev/null && pwd -P || echo "$CONFIGURED_REPO_PATH")
 
