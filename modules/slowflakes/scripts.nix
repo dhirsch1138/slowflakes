@@ -12,7 +12,7 @@ let
       export REPO_PATH="${cfg.repoPath}"
       export STATE_FOLDER_NAME="/var/lib/${cfg.stateFolderName}"
       export DELAY_DAYS="${toString cfg.delayDays}"
-    '' + builtins.readFile ./resources/${name}.sh;
+    '' + builtins.readFile ./resources/scripts/${name}.sh;
 
     # Declare runtime commands your scripts rely on
     runtimeInputs = with pkgs; [
