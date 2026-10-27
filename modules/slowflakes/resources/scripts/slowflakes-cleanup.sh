@@ -9,7 +9,7 @@ set -euo pipefail
 #      export STATE_FOLDER_NAME="${cfg.stateFolderName}"
 #      export DELAY_DAYS="${toString cfg.delayDays}"
 #    '' + builtins.readFile ./resources/scripts/${name}.sh;
-TARGET_STATE_DIR = "/var/lib/${STATE_FOLDER_NAME}"
+TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
 
 if [ ! -d "$TARGET_STATE_DIR" ]; then
   echo "State directory $TARGET_STATE_DIR does not exist. Nothing to clean."
