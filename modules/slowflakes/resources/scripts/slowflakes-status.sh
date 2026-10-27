@@ -5,11 +5,11 @@ set -euo pipefail
 #
 #    # Inject module options as environment variables, followed by the script body
 #    text = ''
-#      export CONFIGURED_REPO_PATH="${cfg.repoPath}"
-#      export TARGET_STATE_DIR="${cfg.stateFolderName}"
+#      export REPO_PATH="${cfg.repoPath}"
+#      export STATE_FOLDER_NAME="${cfg.stateFolderName}"
 #      export DELAY_DAYS="${toString cfg.delayDays}"
-#    '' + builtins.readFile ./resources/${name}.sh;
-
+#    '' + builtins.readFile ./resources/scripts/${name}.sh;
+TARGET_STATE_DIR = "/var/lib/${STATE_FOLDER_NAME}"
 
 
 echo "=== Slowflakes Diagnostic Status ==="

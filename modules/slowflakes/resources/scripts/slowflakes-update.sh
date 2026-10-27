@@ -4,12 +4,13 @@ set -euo pipefail
 # environment variables declarations should be prepended in scripts.nix, as it will have the context of the options
 #
 #    # Inject module options as environment variables, followed by the script body
+#   # Inject module options as environment variables, followed by the script body
 #    text = ''
-#      export CONFIGURED_REPO_PATH="${cfg.repoPath}"
-#      export TARGET_STATE_DIR="${cfg.stateFolderName}"
+#      export REPO_PATH="${cfg.repoPath}"
+#      export STATE_FOLDER_NAME="${cfg.stateFolderName}"
 #      export DELAY_DAYS="${toString cfg.delayDays}"
-#    '' + builtins.readFile ./resources/${name}.sh;
-
+#    '' + builtins.readFile ./resources/scripts/${name}.sh;
+TARGET_STATE_DIR = "/var/lib/${STATE_FOLDER_NAME}"
 
 CURRENT_DIR=$(pwd -P)
 REAL_REPO_PATH=$(cd "$CONFIGURED_REPO_PATH" 2>/dev/null && pwd -P || echo "$CONFIGURED_REPO_PATH")

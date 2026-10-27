@@ -9,7 +9,7 @@
  #     export GIT_USER_NAME="${cfg.gitUserName}"
  #     export GIT_USER_EMAIL="${cfg.gitUserEmail}"
  #   '' + builtins.readFile ./resources/scripts/slowflakes-automation.sh;
-STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
+TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
 TARGET_REPO="${REPO_PATH}"
 
         echo "Starting slowflakes isolated state update routine..."

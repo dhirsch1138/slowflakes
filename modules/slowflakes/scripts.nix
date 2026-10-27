@@ -10,7 +10,7 @@ let
     # Inject module options as environment variables, followed by the script body
     text = ''
       export REPO_PATH="${cfg.repoPath}"
-      export STATE_FOLDER_NAME="/var/lib/${cfg.stateFolderName}"
+      export STATE_FOLDER_NAME="${cfg.stateFolderName}"
       export DELAY_DAYS="${toString cfg.delayDays}"
     '' + builtins.readFile ./resources/scripts/${name}.sh;
 
