@@ -22,6 +22,10 @@ let
       findutils
     ];
   };
+
+  # Helper function to convert booleans to string for bash consumption
+  boolToString = b: if b then "true" else "false";
+
 in {
   slowflakes-status = mkApp "slowflakes-status";
   slowflakes-update = mkApp "slowflakes-update";
