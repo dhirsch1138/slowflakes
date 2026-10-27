@@ -3,23 +3,10 @@
 let
   cfg = config.services.slowflakes;
   stateDir = "/var/lib/${cfg.stateFolderName}";  
-in {
-  config = lib.mkIf cfg.enable {
-    nix.settings.allowed-users = [ "slowflakes-bot" ];
-
-    users.users.slowflakes-bot = {
-      isSystemUser = true;
-      group = "slowflakes-bot";
-      description = "System user for slowflakes-bot background repository automation";
-      home = stateDir;
-    };
-    users.groups.slowflakes-bot = {};
 
   # Helper function to convert booleans to string for bash consumption
   boolToString = b: if b then "true" else "false";
-  
-    # get the automation script(s), we are doing it this way so that we
-    # don't have to make them globally accessible packages
+
   # Create a shell application derivation for the background automation task
   automationScript = pkgs.writeShellApplication {
     name = "slowflakes-automation";
@@ -34,15 +21,26 @@ in {
       export GIT_USER_EMAIL="${cfg.gitUserEmail}"
     '' + builtins.readFile ./resources/scripts/slowflakes-automation.sh;
 
-    # Declare runtime commands used by your automation script (e.g., git, ping)
+    # Declare runtime commands used by your automation script
     runtimeInputs = with pkgs; [
       git
-      iputils   # for ping (if network check is used)
+      iputils   # for ping
       coreutils
       gnugrep
       nix
     ];
   };
+in {
+  config = lib.mkIf cfg.enable {
+    nix.settings.allowed-users = [ "slowflakes-bot" ];
+
+    users.users.slowflakes-bot = {
+      isSystemUser = true;
+      group = "slowflakes-bot";
+      description = "System user for slowflakes-bot background repository automation";
+      home = stateDir;
+    };
+    users.groups.slowflakes-bot = {};
 
     systemd.services.slowflakes-localrepo-update = lib.mkIf cfg.enableLocalAutomation {
       description = "Automated daily update for isolated delayed flake state repo";
@@ -51,8 +49,8 @@ in {
       path = [ pkgs.git pkgs.nix pkgs.iputils ];
 
       serviceConfig = {
-        # Invoke the robust, shellcheck-validated script wrapper directly:
-        ExecStart = "${automation.automationScript}/bin/slowflakes-automation";
+        # Reference the local automationScript derivation directly:
+        ExecStart = "${automationScript}/bin/slowflakes-automation";
         Type = "oneshot";
         RemainAfterExit = true;
         User = "slowflakes-bot";
