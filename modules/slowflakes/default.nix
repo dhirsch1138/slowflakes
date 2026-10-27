@@ -60,9 +60,9 @@ in {
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
-      scripts.slowflakesUpdateScript
-      scripts.slowflakesStatusScript
-      scripts.slowflakesCleanupScript
+      scripts.slowflakes-update
+      scripts.slowflakes-status
+      scripts.slowflakes-cleanup
       manPages.slowflakesManPagesPackage
     ];
   };
