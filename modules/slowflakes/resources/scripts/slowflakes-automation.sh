@@ -53,7 +53,7 @@ fi
         fi
 
         # History Retention Pruning Rule
-        RETENTION_DAYS=$(( $DELAY_DAYS * 3 ))
+        RETENTION_DAYS=$(( DELAY_DAYS * 3 ))
         CUTOFF_COMMIT=$(git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" rev-list -n 1 --before="$DELAY_DAYS days ago" HEAD 2>/dev/null || true)
 
         if [ -n "$CUTOFF_COMMIT" ]; then
