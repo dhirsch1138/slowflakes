@@ -10,7 +10,7 @@ set -euo pipefail
 #      export DELAY_DAYS="${toString cfg.delayDays}"
 #    '' + builtins.readFile ./resources/scripts/${name}.sh;
 TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
-
+CONFIGURED_REPO_PATH="${REPO_PATH}"
 
 echo "=== Slowflakes Diagnostic Status ==="
 echo "State Directory:  $TARGET_STATE_DIR ($(du -sh "$TARGET_STATE_DIR" 2>/dev/null | cut -f1 || echo "N/A"))"
