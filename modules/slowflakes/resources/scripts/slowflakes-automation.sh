@@ -26,14 +26,14 @@ fi
         if [ ! -d "$TARGET_STATE_DIR/.git" ]; then
           echo "Isolated state repository not found. Initializing fresh repository at $TARGET_STATE_DIR..."
           git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" init -b main
-          git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" config user.name "${cfg.gitUserName}"
-          git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" config user.email "${cfg.gitUserEmail}"
+          git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" config user.name "$GIT_USER_NAME"
+          git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" config user.email "$GIT_USER_EMAIL"
           
-          if [ -f "${cfg.repoPath}/flake.nix" ]; then
-            echo "Seeding initial baseline flake.nix and flake.lock from ${cfg.repoPath}..."
-            cp "${cfg.repoPath}/flake.nix" "$TARGET_STATE_DIR/"
-            if [ -f "${cfg.repoPath}/flake.lock" ]; then
-              cp "${cfg.repoPath}/flake.lock" "$TARGET_STATE_DIR/"
+          if [ -f "$TARGET_REPO/flake.nix" ]; then
+            echo "Seeding initial baseline flake.nix and flake.lock from $TARGET_REPO..."
+            cp "$TARGET_REPO/flake.nix" "$TARGET_STATE_DIR/"
+            if [ -f "$TARGET_REPO/flake.lock" ]; then
+              cp "$TARGET_REPO/flake.lock" "$TARGET_STATE_DIR/"
             fi
             git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" add flake.nix flake.lock 2>/dev/null || true
             git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" commit -m "Initial baseline seed" 2>/dev/null || true
@@ -53,8 +53,8 @@ fi
         fi
 
         # History Retention Pruning Rule
-        RETENTION_DAYS=$(( ${toString cfg.delayDays} * 3 ))
-        CUTOFF_COMMIT=$(git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" rev-list -n 1 --before="''${RETENTION_DAYS} days ago" HEAD 2>/dev/null || true)
+        RETENTION_DAYS=$(( $DELAY_DAYS * 3 ))
+        CUTOFF_COMMIT=$(git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" rev-list -n 1 --before="$DELAY_DAYS days ago" HEAD 2>/dev/null || true)
 
         if [ -n "$CUTOFF_COMMIT" ]; then
           COMMIT_COUNT=$(git -c safe.directory="$TARGET_STATE_DIR" -C "$TARGET_STATE_DIR" rev-list --count "$CUTOFF_COMMIT..HEAD")
