@@ -12,8 +12,8 @@ set -euo pipefail
 TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
 
 if [ ! -d "$TARGET_STATE_DIR" ]; then
-  echo "State directory $TARGET_STATE_DIR does not exist. Nothing to clean."
-  exit 0
+	echo "State directory $TARGET_STATE_DIR does not exist. Nothing to clean."
+	exit 0
 fi
 
 echo "WARNING: You are about to execute: sudo rm -rf '$TARGET_STATE_DIR'"
@@ -22,13 +22,13 @@ echo "The background systemd service will re-initialize it fresh on its next run
 read -rp "Are you sure you want to proceed? [y/N] " response
 
 case "$response" in
-  [yY][eE][sS]|[yY])
-    echo "Purging $TARGET_STATE_DIR..."
-    rm -rf "$TARGET_STATE_DIR"
-    echo "Success: Isolated state repository cleared."
-    ;;
-  *)
-  echo "Aborted."
-  exit 0
-  ;;
+[yY][eE][sS] | [yY])
+	echo "Purging $TARGET_STATE_DIR..."
+	rm -rf "$TARGET_STATE_DIR"
+	echo "Success: Isolated state repository cleared."
+	;;
+*)
+	echo "Aborted."
+	exit 0
+	;;
 esac
