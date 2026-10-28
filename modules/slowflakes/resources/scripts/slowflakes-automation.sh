@@ -12,8 +12,8 @@
 TARGET_STATE_DIR="/var/lib/${STATE_FOLDER_NAME}"
 TARGET_REPO="${REPO_PATH}"
 
-        echo "Starting slowflakes isolated state update routine..."
-        echo "Target state directory: $TARGET_STATE_DIR"
+echo "Starting slowflakes isolated state update routine..."
+echo "Target state directory: $TARGET_STATE_DIR"
 
 # If network check is enabled, verify connectivity first
 if [ "${NETWORK_CHECK_ENABLED}" = "true" ]; then

@@ -24,7 +24,7 @@ read -rp "Are you sure you want to proceed? [y/N] " response
 case "$response" in
   [yY][eE][sS]|[yY])
     echo "Purging $TARGET_STATE_DIR..."
-    sudo rm -rf "$TARGET_STATE_DIR"
+    rm -rf "$TARGET_STATE_DIR"
     echo "Success: Isolated state repository cleared."
     ;;
   *)
