@@ -16,7 +16,7 @@ if [ ! -d "$TARGET_STATE_DIR" ]; then
 	exit 0
 fi
 
-echo "WARNING: You are about to execute: sudo rm -rf '${TARGET_STATE_DIR:?}/*'"
+echo "WARNING: You are about to execute: sudo rm -rf '${TARGET_STATE_DIR:?}/'{*,.*}"
 echo "This will completely destroy the isolated rolling state repository and all its update history."
 echo "The background systemd service will re-initialize it fresh on its next run."
 read -rp "Are you sure you want to proceed? [y/N] " response
@@ -24,7 +24,7 @@ read -rp "Are you sure you want to proceed? [y/N] " response
 case "$response" in
 [yY][eE][sS] | [yY])
 	echo "Purging contents of $TARGET_STATE_DIR..."
-	rm -rf "${TARGET_STATE_DIR:?}/*"
+	rm -rf "${TARGET_STATE_DIR:?}/"{*,.*}
 	echo "Success: Isolated state repository cleared."
 	;;
 *)
